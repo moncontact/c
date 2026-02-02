@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Terminale TSE/TSExp - Tous Documents</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
+            min-height: 100vh; 
+            padding: 20px; 
+            overflow-x: hidden;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+
+        /* Header Légendaire */
+        header { 
+            text-align: center; 
+            padding: 40px 0; 
+            color: white; 
+        }
+        h1 { 
+            font-size: clamp(2rem, 7vw, 3rem); 
+            font-weight: 700; 
+            margin-bottom: 15px; 
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .subtitle { 
+            font-size: clamp(1.1rem, 4vw, 1.4rem); 
+            opacity: 0.95; 
+            margin-bottom: 10px;
+        }
+        .stats { 
+            background: rgba(255,255,255,0.2); 
+            backdrop-filter: blur(20px); 
+            border-radius: 20px; 
+            padding: 15px 25px; 
+            margin-bottom: 30px; 
+            display: flex; 
+            justify-content: space-around; 
+            font-size: 14px;
+        }
+        .stat { font-weight: 600; }
+
+        /* Recherche Légendaire */
+        .search-container { 
+            background: rgba(255,255,255,0.95); 
+            backdrop-filter: blur(20px); 
+            padding: 20px; 
+            border-radius: 25px; 
+            margin-bottom: 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        #searchInput { 
+            width: 100%; 
+            padding: 16px 20px; 
+            font-size: 16px; 
+            border: 2px solid #e1e8ed; 
+            border-radius: 50px; 
+            background: white; 
+            transition: all 0.3s;
+        }
+        #searchInput:focus { 
+            outline: none; 
+            border-color: #667eea; 
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+            transform: scale(1.02);
+        }
+
+        /* Grille Légendaire 25 Boutons */
+        .docs-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 18px; 
+        }
+        .doc-btn { 
+            background: rgba(255,255,255,0.95); 
+            backdrop-filter: blur(25px); 
+            border-radius: 20px; 
+            padding: 22px 16px; 
+            text-align: center; 
+            border: none; 
+            font-size: 15px; 
+            font-weight: 500; 
+            color: #2c3e50; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            gap: 6px;
+        }
+        .doc-btn::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: -100%; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); 
+            transition: left 0.6s;
+        }
+        .doc-btn:hover::before { left: 100%; }
+        .doc-btn:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
+        .doc-btn:active { 
+            transform: translateY(-2px) scale(0.98);
+            animation: fadeIn 0.4s ease forwards;
+opacity: 0;
+        }
+        .doc-icon { 
+            font-size: 1.8rem; 
+            margin-bottom: 4px;
+        }
+        .doc-name { 
+            font-size: 14px; 
+            line-height: 1.3; 
+        }
+        .doc-badge { 
+            background: #667eea; 
+            color: white; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            align-self: flex-start;
+        }
+
+        /* Animation téléchargement */
+        @keyframes downloadPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .downloading { animation: downloadPulse 0.6s; background: #48bb78 !important; color: white !important; }
+
+        /* Pas de résultat */
+        .no-results { 
+            text-align: center; 
+            padding: 60px 20px; 
+            color: rgba(255,255,255,0.7);
+        }
+        .no-results i { font-size: 4rem; margin-bottom: 20px; opacity: 0.5; }
+
+        /* ===== FOOTER COOL VERSION ===== */
+footer {
+    margin-top: 50px;
+    padding: 25px 20px;
+
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
+
+    border-radius: 20px;
+    text-align: center;
+
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+    transition: all 0.3s ease;
+}
+
+/* effet hover classe */
+footer:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+}
+
+/* texte interne */
+footer strong {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(45deg, #fff, #cbd5ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* petit emoji animé */
+footer i {
+    margin-right: 6px;
+    animation: float 2s infinite ease-in-out;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0px); }
+}
+        }
+}
+@keyframes fadeIn {
+  to { opacity: 1; transform: translateY(0); }
+       }
+}
+        /* Mobile Ultra */
+        @media (max-width: 480px) {
+            body { padding: 15px; }
+            .docs-grid { grid-template-columns: 1fr; gap: 15px; }
+            .doc-btn { padding: 20px 16px; min-height: 70px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1><i style="color:#fff;">📚</i> Terminale TSE/STI/TSExp</h1>
+            <p class="subtitle">Tous les documents Maths & Physique/Chimie en PDF pour une meilleure terminale</p>
+            <div class="stats">
+                <div class="stat"><i class="fas fa-file-pdf"></i> Docs</div>
+                <div class="stat"><i class="fas fa-download"></i> Cliquez pour télécharger</div>
+                </div>
+                <span id="docCount"></span> Docs
+        </header>
+
+        <!-- Recherche -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 Tape Maths, Physique , Exos ..." />
+        </div>
+
+        <!-- 25 Boutons Légendaires -->
+        <div class="docs-grid" id="docsGrid">
+            <!-- Boutons générés par JS -->
+        </div>
+
+        <!-- No Results -->
+        <div class="no-results" id="noResults" style="display:none;">
+            <i class="fas fa-search"></i>
+            <h2>Aucun résultat</h2>
+            <p>Essaie "Maths TSE" ou "Physique TSExp"</p>
+        </div>
+
+        <footer>
+             <p>
+        <i class="fas fa-graduation-cap"></i>
+        <strong>Presenté par 𝕄𝕠𝕙𝕒𝕞𝕖𝕕 ℍ𝕒𝕕𝕚𝕤𝕤𝕒</strong> Ce site à été créer légalement par ℍ𝕒𝕕𝕚𝕤𝕤𝕒 dans un cadre éducatif dans le but d'aider les élèves de la terminale pour des exercices et leçons. Ce site est en cours de développement donc nous espérons faire des mises à jours pour des nouveaux documents et encore  ajouter tous les filières et autres classes Merci pour la bonne compréhension de tout un chacun.
+        </p>
+        </footer>
+    </div>
+
+    <script>
+        // 25 DOCUMENTS TSE/STI/TSExp (ÉDITABLE)
+        const documents = [
+            // MATHS TSE (10)
+           
+            { name: '📐 Top Exos physique TSE-STI-TSExp', file: 'topexosph.pdf', badge: 'TSE', icon: '📐' },
+            { name: '📐 Top Exos chimie TSE-STI-TSExp', file: 'topexoschimie.pdf', badge: 'TSE', icon: '📐' },
+            { name: '📐 Cahier de physique TSE-STI-TSExp', file: 'cahph.pdf', badge: 'TSE', icon: '📐' },
+            { name: '📝 cahier de chimie TSE-STI-TSExp', file: 'cahch.pdf', badge: 'TSE', icon: '📝' },
+            { name: '📋 Chapitre 1 Nombre Complexe TSE-STI-TSExp', file: 'nc.pdf', badge: 'TSE', icon: '📋' },
+            { name: '🔥 Chapitre 2 Arithmétique TSE-STI-TSExp' , file: 'ar.pdf', badge: 'TSE', icon: '🔥' },
+
+            // PHYSIQUE/CHIMIE TSE (5)
+            { name: '⚛️ Toutes les définitions de la physique TSE-STI-TSExp', file: 'tc.pdf', badge: 'TSE', icon: '⚛️' },
+            { name: '🧪 Toutes les définitions de la Chimie TSE-STI-TSExp', file: 'tc.pdf', badge: 'TSE', icon: '🧪' },
+            { name: '📊 ACIDE X-AMINES  AU BAC TSE-STI-TSExp', file: 'aa.pdf', badge: 'TSE', icon: '📊' },
+
+            // MATHS TSExp (5)
+            { name: '📐 POLYMERES ET GLUCOSE AU BAC TSE-STI-TSExp', file: 'pg.pdf', badge: 'TSExp', icon: '📐' },
+            { name: '📐 ACIDE CARBOXYLIQUE ET DERIVES AU BAC TSE-STI-TSExp', file: 'ac.pdf', badge: 'TSExp', icon: '📐' },
+            { name: '📝 SATELLITE AU BAC TSE-STI-TSExp', file: 'sa.pdf', badge: 'TSExp', icon: '📝' },
+
+            // PHYSIQUE/CHIMIE TSExp (5)
+            { name: '⚛️ ALCOOLS AU BAC TSE-STI-TSExp ', file: 'al.pdf', badge: 'TSExp', icon: '⚛️' },
+            { name: '🧪 LES AMINES AU BAC TSE-STI-TSExp', file: 'am.pdf', badge: 'TSExp', icon: '🧪' },
+            { name: '🔬 CHAMPS ELECTRIQUE-MAGNETIQUE AU BAC TSE-STI-TSExp', file: 'cem.pdf', badge: 'TSExp', icon: '🔬' },
+            { name: '📈 PROJECTILE AU BAC TSE-STI-TSExp', file: 'pr.pdf', badge: 'TSExp', icon: '📈' },
+            { name: '💯 Fonctions numeriques TSE-STI-TSExp', file: 'fn.pdf', badge: 'Bac', icon: '💯' },
+           
+{ name: '☸️ Chapitre-5.-Fonction-Logarithme-TSE', file: 'fl.pdf', badge: 'TSE', icon: '☸️' },
+{ name: '✡️ Chapitre-6.-Fonctions-Exponentielles_TSE', file: 'fe.pdf', badge: 'TSE', icon: '✡️' },
+{ name: '🔯 Chapitre-4.-Primitives-Integrales-TSE', file: 'pi.pdf', badge: 'TSE', icon: '🔯' },
+
+{ name: '💠 Chapitre-8.-Equations-differentielles-TSE', file: 'ed', badge: 'TSE', icon: '💠' },
+{ name: '🇲🇱 Chapitre-7.-Suites-numeriques.-TSE', file: 'sn.pdf', badge: 'TSE', icon: '🇲🇱' },
+{ name: '📘 Correction-Bac-1992-2005', file: 'co.pdf', badge: 'TSE', icon: '📘' },
+{ name: '🔷 1000-dissertations-de-philosophie', file: 'ph.pdf', badge: 'TSE', icon: '🔷' },
+{ name: '♾️ Chapitre-12.-Applications-affines-TSE', file: 'af.pdf', badge: 'TSE', icon: '♾️' },
+{ name: '📘 Chapitre-9.-Probabilite-TSE', file: 'pro.pdf', badge: 'TSE', icon: '📘' },
+ { name: '🔰 TSE-STI-sujets-BAC-MATHS', file: 'su.pdf', badge: 'TSE', icon: '🔰' },
+{ name: '✅ TSE-STI-sujets-BAC-MATHS-2010-2020', file: 'sj.pdf', badge: 'TSE', icon: '✅' },
+        ];
+
+        const docsGrid = document.getElementById('docsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+        let allButtons = [];
+
+        // Génère 25 boutons
+        function renderDocuments(filter = '') {
+            docsGrid.innerHTML = '';
+            const filtered = documents.filter(doc => 
+                doc.name.toLowerCase().includes(filter.toLowerCase()) ||
+                doc.file.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                noResults.style.display = 'block';
+                return;
+            }
+            noResults.style.display = 'none';
+
+            filtered.forEach((doc, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'doc-btn';
+                btn.innerHTML = `
+                    <div class="doc-icon">${doc.icon}</div>
+                    <div class="doc-name">${doc.name}</div>
+                    <div class="doc-badge">${doc.badge}</div>
+                `;
+                btn.onclick = () => downloadFile(doc.file, btn);
+                docsGrid.appendChild(btn);
+                allButtons.push(btn);
+            });
+        }
+
+        // Download + Feedback
+        function downloadFile(filename, button) {
+            button.classList.add('downloading');
+            button.innerHTML = `
+                <i class="fas fa-check-circle" style="font-size:1.8rem;color:#fff;"></i>
+                <div style="font-weight:600;">Téléchargé !</div>
+            `;
+
+            const a = document.createElement('a');
+            a.href = `./${filename}`;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            setTimeout(() => {
+                button.classList.remove('downloading');
+                renderDocuments(searchInput.value); // Refresh
+            }, 1500);
+        }
+
+        // Recherche live
+        searchInput.addEventListener('input', (e) => {
+            renderDocuments(e.target.value);
+        });
+
+        // Init
+        renderDocuments();
+        document.getElementById('docCount').textContent = documents.length;
+    </script>
+</body>
+</html>
