@@ -57,6 +57,18 @@
             margin-bottom: 30px; 
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
+        <button id="installBtn" style="
+background:white;
+color:#667eea;
+border:none;
+padding:12px 18px;
+border-radius:25px;
+font-weight:600;
+margin-top:15px;
+display:none;
+cursor:pointer;">
+📲 Installer l'application
+</button>
         #searchInput { 
             width: 100%; 
             padding: 16px 20px; 
@@ -360,6 +372,22 @@ footer i {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./service-worker.js");
 }
+        
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'inline-block';
+});
+
+installBtn.addEventListener('click', async () => {
+  installBtn.style.display = 'none';
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+});
+
     </script>
 </body>
 </html>
